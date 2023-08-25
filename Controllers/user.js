@@ -2,10 +2,22 @@
 var Userschema=require("../Models/UserSchema")
 var Productschema=require('../Models/Productschema')
 var jwt=require('jsonwebtoken')
+const {authschema}=require('./validation')
+const bcrypt=require('bcrypt')
+
 
 module.exports ={
     register: async (req,res)=>{
-        const {username,email,password}= await req.body
+        const {error,value} = await authschema.validate(req.body)
+        const {username,email,password}=value
+        console.log(username);
+
+        if(error){
+            res.status(422).json({
+                status:"error",
+                message:error.details[0].message,
+            })
+        }else{
         await Userschema.create({
             username:username,
             email:email,
@@ -15,23 +27,33 @@ module.exports ={
             status:"success",
             message:"successfully register"
         })
-    },
+    }},
+    
     login: async (req,res)=>{
-        const {email,password}=req.body
-        const user=await Userschema.find({email:email,password:password})
+        const {error,value}=await authschema.validate(req.body)
+        const {email,password}=value
+        if(error){
+            res.status(422).json({
+                status:"error",
+                message:error.details[0].message,
+            })
+        }else{
+
+        const user=await Userschema.findOne({email:email,password:password})
+        console.log(user);
         if(user.length !=0){
             let resp={
-                id:user[0].id,
+                id:user._id,
             }
-            let token = jwt.sign(resp,"hidden")
+            let token = jwt.sign(resp,process.env.ACCESS_TOKEN_SECRET)
             res.status(200).json({
                 status:"success",
                 data:user,
                 auth:true,
-                token:token
+                token:token,
             })
         }
-    },
+    }},
     products: async (req,res)=>{
      res.json(await Productschema.find())  
     },

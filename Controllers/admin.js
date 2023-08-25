@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   login: async (req, res) => {
     //TODO: Implement Bcrypt
-
+    // const {error, value}=
     const admin = { email: "admin", password: "admin" };
     const { email, password } = req.body;
     if (admin.email == email && admin.password == password) {
