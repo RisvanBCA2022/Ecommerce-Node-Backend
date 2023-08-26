@@ -3,7 +3,7 @@ var jwt=require('jsonwebtoken')
 var adminroutes=express.Router()
 var controller=require('../Controllers/admin')
 var tryCathMiddleware=require('../middleware/tryCatch')
-var authentication=require('../middleware/jwt')
+var authentication=require('../middleware/jwtadmin')
 
 adminroutes.post('/admin/login',tryCathMiddleware(controller.login))
 adminroutes.get('/admin/users',authentication,tryCathMiddleware(controller.showusers))

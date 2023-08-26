@@ -12,7 +12,7 @@ module.exports = {
       let resp = {
         id: admin.username,
       };
-      let jwt_token = jwt.sign(resp, "thisisadmin");
+      let jwt_token = jwt.sign(resp, process.env.ADMIN_TOKEN_SECRET);
       res.status(200).json({
         status: "success",
         message: "Successfully logged In",
