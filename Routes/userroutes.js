@@ -15,6 +15,9 @@ userroutes.get('/users/products/:id/cart',authentication,tryCathMiddleware(contr
 userroutes.post('/users/products/:id/wishlists',authentication,tryCathMiddleware(controller.wishlist))
 userroutes.get('/users/products/:id/wishlists',authentication,tryCathMiddleware(controller.showwishlist))
 userroutes.delete('/users/products/:id/wishlists',authentication,tryCathMiddleware(controller.deletewishlist))
+userroutes.post('/payment/:id',authentication,tryCathMiddleware(controller.payment))
+userroutes.get('/users/payment/success',tryCathMiddleware(controller.success))
+userroutes.post('users/payment/cancel',tryCathMiddleware(controller.cancel))
 
 
 module.exports=userroutes
