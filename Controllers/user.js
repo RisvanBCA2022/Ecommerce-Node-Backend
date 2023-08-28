@@ -153,6 +153,6 @@ module.exports ={
         })
     },
     cancel: async (req,res)=>{
-        res.json("cancel")
+        res.json("cancel payment")
     }
 }
