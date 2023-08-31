@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken')
 module.exports = (req,res,next) =>{
     try {
         let authheader = req.headers.authorization;
-        console.log(authheader)
         if(authheader == undefined){
             res.status(401).send({error:"no tocken provider"})
         }

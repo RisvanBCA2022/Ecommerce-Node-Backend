@@ -57,7 +57,7 @@ module.exports = {
   },
   showproductbycategory: async (req, res) => {
     const products = await Productschema.find({
-      category: req.params.categoryname,
+      category: req.query.category,
     });
     if (products.length != 1) {
       res.status(200).json({
@@ -134,4 +134,14 @@ module.exports = {
       });
     }
   },
+  orderdetails:async (req,res)=>{
+    const order=await Userschema.find({},"orders")
+    console.log(order)
+    const orders=order.filter((item)=>{
+      return item.orders.length>0
+    })
+    res.json({
+     data:orders
+    })
+  }
 };

@@ -17,16 +17,25 @@ module.exports ={
                 message:error.details[0].message,
             })
         }else{
-        await Userschema.create({
-            username:username,
-            email:email,
-            password:password
-        })
+            const finduser = await Userschema.find({username:username})
+
+            if(finduser.length>0){
+                return res.status(401).json({status:false,message:'Already registered'})
+            }
+            else{
+                bcrypt.hash(password,10,async function(err,hash){
+                    await Userschema.create({
+                        username:username,
+                        email:email,
+                        password:hash
+                    })
+                }) //hashed the password from user and stored the hashed password in database
+       
         res.status(200).json({
             status:"success",
             message:"successfully register"
         })
-    }},
+    }}},
     
     login: async (req,res)=>{
         const {error,value}=await authschema.validate(req.body)
@@ -38,21 +47,42 @@ module.exports ={
             })
         }else{
 
-        const user=await Userschema.findOne({email:email,password:password})
-        console.log(user);
-        if(user.length !=0){
-            let resp={
-                id:user._id,
-            }
-            let token = jwt.sign(resp,process.env.ACCESS_TOKEN_SECRET)
-            res.status(200).json({
-                status:"success",
-                data:user,
-                auth:true,
-                token:token,
+        const user=await Userschema.findOne({email:email})
+        if(!user){
+            return res.status(401).json({
+                auth:false,
+                message:"invalid username or password"
             })
         }
-    }},
+        else{
+            // let Password =await bcrypt.hash(password,10) //hashed the password from in login page
+            // console.log(Password)
+            // console.log(user.password);
+            const dec= await bcrypt.compare(password,user.password)
+            console.log(dec);
+                if(!dec){
+                    res.json({
+                        status:"failure",
+                        message:"password or username is wrong",
+
+                    })
+                }else{
+                    let resp={
+                        id:user._id,
+                    }
+                    let token = jwt.sign(resp,process.env.ACCESS_TOKEN_SECRET)
+                    res.status(200).json({
+                        status:"success",
+                        data:user,
+                        auth:true,
+                        token:token,
+                    })
+                }
+    
+            }
+           
+        }
+    },
     products: async (req,res)=>{
      res.json(await Productschema.find())  
     },
@@ -60,7 +90,7 @@ module.exports ={
         const product=await Productschema.find({_id:req.params.id})
         res.json(product)
     },
-    productbycatego: async (req,res)=>{
+    productbycategory: async (req,res)=>{
         const category = await Productschema.find({category:req.params.categoryname})
         res.json(category)
     },
@@ -91,7 +121,7 @@ module.exports ={
     showwishlist: async (req,res)=>{
         const wishlistpr=await Userschema.find({_id:req.params.id}).populate("wishlist")
         if(wishlistpr[0].wishlist.length != 0){
-            res.json(wishlistpr.wishlist)
+            res.json(wishlistpr[0].wishlist)
         }
     },
     deletewishlist: async (req,res)=>{
@@ -121,7 +151,6 @@ module.exports ={
                 quantity:1
             }
         })
-        console.log(cartitem);
         if(cartitem!=0){
             const session = await stripe.checkout.sessions.create({
                 line_items:cartitem,
@@ -143,8 +172,9 @@ module.exports ={
     },
     success: async(req,res)=>{
         const user = await Userschema.find({_id:temp.id})
+        console.log(user);
         if(user.length!=0){
-            await Userschema.updateOne({id:temp.id},{$push:{order:{product:temp.caritem,date:new Date(),orderid:Math.random(),paymentid:temp.paymentid,totalamount:temp.amount}}})
+            await Userschema.updateOne({_id:temp.id},{$push:{orders:{product:temp.caritem,date:new Date(),orderid:Math.random(),paymentid:temp.paymentid,totalamount:temp.amount}}})
             await Userschema.updateOne({_id:temp.id},{cart:[]})
         }
         res.status(200).json({

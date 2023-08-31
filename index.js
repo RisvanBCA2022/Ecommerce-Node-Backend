@@ -4,6 +4,7 @@ const mongoose=require('mongoose')
 const app=express()
 const userroutes=require('./Routes/userroutes')
 const adminroutes=require('./Routes/adiminroutes')
+// const bcrypt=require('bcrypt')
 require('dotenv').config()
 
 app.use(bodyparser.json())

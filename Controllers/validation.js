@@ -14,4 +14,5 @@ const auth_productschema=joi.object({
     image:joi.string(),
     category:joi.string(),
 })
+
 module.exports={authschema,auth_productschema}

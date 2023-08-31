@@ -1,4 +1,4 @@
-const tryCathMiddleware = (handler)=>{
+const tryCatchMiddleware = (handler)=>{
     return async (req,res,next) =>{
         try{
             await handler(req,res,next)
@@ -14,4 +14,4 @@ const tryCathMiddleware = (handler)=>{
     }
 }
 
-module.exports = tryCathMiddleware
+module.exports = tryCatchMiddleware
