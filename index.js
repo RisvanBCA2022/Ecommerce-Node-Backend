@@ -9,10 +9,10 @@ require('dotenv').config()
 
 app.use(bodyparser.json())
 
-mongoose.connect('mongodb+srv://mohammedrisvan16:justdo1t@cluster0.vr7cd4x.mongodb.net/?retryWrites=true&w=majority')
+mongoose.connect(process.env.MONGOURL)
 
 app.use('/api',userroutes,adminroutes)
 
-app.listen(3000, () => {
+app.listen(8000, () => {
     console.log('App listening on port 3000!');
 });
