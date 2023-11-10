@@ -9,7 +9,7 @@ require('dotenv').config()
 
 app.use(bodyparser.json())
 
-mongoose.connect('mongodb://127.0.0.1:27017/items')
+mongoose.connect('mongodb+srv://mohammedrisvan16:justdo1t@cluster0.vr7cd4x.mongodb.net/?retryWrites=true&w=majority')
 
 app.use('/api',userroutes,adminroutes)
 
